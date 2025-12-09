@@ -3,6 +3,7 @@ import cors from "cors";
 import connectDB from "./config/db";
 import { config } from "./config/config";
 import authRoutes from "./routes/auth";
+import cookieParser from "cookie-parser";
 const app: Application = express();
 
 app.use(express.json());
@@ -27,6 +28,3 @@ app.get("/", (req: Request, res: Response) => {
 app.listen(config.port, () => {
   console.log(`server is running on port:${config.port}`);
 });
-function cookieParser(): any {
-  throw new Error("Function not implemented.");
-}

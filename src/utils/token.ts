@@ -4,6 +4,8 @@ import { TokenPayload } from "../types";
 
 const jwtSecret = config.jwtSecret as string;
 const accessTokenExpiry = config.accessTokenExpiry as string;
+const jwtRefreshSecret = config.jwtRefreshSecret;
+const refreshTokenExpiry = config.refreshTokenExpiry;
 
 //  Generate Access Token (short-lived)
 
@@ -22,9 +24,9 @@ export const generateRefreshToken = (userId: string): string => {
 
   return jwt.sign(
     payload,
-    config.jwtRefreshSecret as Secret,
+    jwtRefreshSecret as Secret,
     {
-      expiresIn: config.refreshTokenExpiry,
+      expiresIn: refreshTokenExpiry,
     } as SignOptions
   );
 };
@@ -32,13 +34,13 @@ export const generateRefreshToken = (userId: string): string => {
 //   Verify Access Token
 
 export const verifyAccessToken = (token: string): TokenPayload => {
-  return jwt.verify(token, config.jwtSecret as Secret) as TokenPayload;
+  return jwt.verify(token, jwtSecret as Secret) as TokenPayload;
 };
 
 //  Verify Refresh Token
 
 export const verifyRefreshToken = (token: string): TokenPayload => {
-  return jwt.verify(token, config.jwtRefreshSecret as Secret) as TokenPayload;
+  return jwt.verify(token, jwtRefreshSecret as Secret) as TokenPayload;
 };
 
 //  Generate both tokens at once

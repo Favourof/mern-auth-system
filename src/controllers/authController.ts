@@ -198,7 +198,6 @@ export const logout = async (
 };
 
 //   Get current user
-
 export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
@@ -206,9 +205,12 @@ export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
       return;
     }
 
-    const user = await User.findById(req.user.id).select(
-      "-password -refreshToken"
-    );
+    const user = await User.findById(req.user.id).select("-password ");
+
+    if (!user?.refreshToken) {
+      res.status(400).json({ message: "login agian" });
+      return;
+    }
 
     if (!user) {
       res.status(404).json({ message: "User not found" });
