@@ -4,7 +4,7 @@ export interface IUserDocument extends Document {
   name: string;
   email: string;
   password: string;
-  refreshtoken: string;
+  refreshToken: string;
   role: "user" | "admin";
   createsAT: Date;
 }
