@@ -205,12 +205,9 @@ export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
       return;
     }
 
-    const user = await User.findById(req.user.id).select("-password ");
-
-    if (!user?.refreshToken) {
-      res.status(400).json({ message: "login agian" });
-      return;
-    }
+    const user = await User.findById(req.user.id).select(
+      "-password -refreshToken"
+    );
 
     if (!user) {
       res.status(404).json({ message: "User not found" });

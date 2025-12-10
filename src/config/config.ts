@@ -20,7 +20,7 @@ export const config: Config = {
   jwtSecret: process.env.JWT_SECRET || "",
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET as string,
   nodeEnv: process.env.NODE_ENV || "development",
-  clientUrl: process.env.CLIENT_URL || "http://localhost:3000",
+  clientUrl: process.env.CLIENT_URL || "http://localhost:4002",
   cookieMaxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
   accessTokenExpiry: "15m",
   refreshTokenExpiry: "7d",

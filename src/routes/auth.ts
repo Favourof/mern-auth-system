@@ -8,6 +8,7 @@ import {
   logout,
 } from "../controllers/authController";
 import { protect } from "../middleware/auth";
+import { checkSession } from "../middleware/checkSession";
 
 const router: Router = express.Router();
 
@@ -31,7 +32,7 @@ router.post("/login", loginValidation, login);
 router.post("/refresh", refreshToken);
 
 // Protected routes
-router.post("/logout", protect, logout);
-router.get("/me", protect, getMe);
+router.post("/logout", protect, checkSession, logout);
+router.get("/me", protect, checkSession, getMe);
 
 export default router;
