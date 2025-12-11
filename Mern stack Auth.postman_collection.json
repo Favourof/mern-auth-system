@@ -1,0 +1,453 @@
+{
+	"info": {
+		"_postman_id": "ccfc0c08-adb0-42fe-a16a-b4528db7d421",
+		"name": "Mern stack Auth",
+		"description": "Project overview This collection implements a complete authentication and user management module suitable for a MERN (MongoDB, Express, React, Node) stack. It covers:\n\n- User onboarding: registration, email verification, login\n    \n- Session lifecycle: access/refresh token issuance and rotation, logout\n    \n- Account recovery: forgot password, reset password, change password\n    \n- Authorization: protected route access\n    \n- Admin features: list users, get user by id, change user role, user stats\n    \n\nHigh-level request map (suggested folder structure)\n\n- Auth\n    \n    - Register-user (POST {{base_url}}/register)\n        \n    - Verify Email (POST {{base_url}}/verify-email)\n        \n    - Resend email verification (POST {{base_url}}/resend-verification)\n        \n    - Login (POST {{base_url}}/login)\n        \n    - Refresh-token (POST {{base_url}}/refresh)\n        \n    - Log out (POST {{base_url}}/logout)\n        \n- Password\n    \n    - Request Password Reset (POST {{base_url}}/forgot-password)\n        \n    - Reset-password (POST [http://localhost:4002/api/auth/reset-password](http://localhost:4002/api/auth/reset-password)) \\[note: base_url inconsistency\\]\n        \n    - Change-password (GET — likely should be PUT/PATCH)\n        \n- Protected\n    \n    - Protected Route: (GET {{base_url}}/me)\n        \n- Admin Route\n    \n    - Get All user (GET {{base_url_admin}}/users)\n        \n    - Get user by id (GET …/users/:id)\n        \n    - Change User Role (PUT {{base_url_admin}}/users/:id/role)\n        \n    - Get user stats (GET {{base_url_admin}}/stats)\n        \n\nCore workflows\n\n- Email verification flow\n    \n    1. Register-user → 2) Resend email verification (if needed) → 3) Verify Email\n        \n- Auth/session flow\n    \n    1. Login → 2) Protected Route: (me) to validate access token → 3) Refresh-token for rotation → 4) Log out\n        \n- Password recovery flow\n    \n    1. Request Password Reset → 2) Reset-password (with token from email)\n        \n- Password maintenance\n    \n    - Change-password (should be authenticated; should be PUT/PATCH)\n        \n\nEnvironments and variables\n\n- Active environment: Auth Environment\n    \n- Known variables:\n    \n    - base_url, base_url_admin: API base URLs (user-facing and admin routes)\n        \n    - access_token, refresh_token: session tokens\n        \n    - user_id: for user-specific admin operations\n        \n- Collection variable: token (unused or redundant with environment tokens)\n    \n- Recommendation:\n    \n    - Standardize on environment vars for tokens (access_token, refresh_token). Remove collection-level token variable unless explicitly needed for scoped behavior.\n        \n    - Ensure all requests reference {{base_url}} or {{base_url_admin}} consistently; fix hardcoded Reset-password URL.\n        \n\nAuth and headers\n\n- Protected user routes likely require Authorization: Bearer {{access_token}}\n    \n- Admin routes should either:\n    \n    - Inherit collection/folder auth with Bearer {{access_token}}, and rely on server-side role checks; or\n        \n    - Use a separate admin credential set if applicable.\n        \n- Recommendation:\n    \n    - Set Bearer token auth at the collection or folder level (Auth and Admin Route folders) and ensure requests inherit from parent.\n        \n    - Add pre-request scripts to inject Authorization from environment tokens where needed.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33609178",
+		"_collection_link": "https://favour-9141.postman.co/workspace/favour-Workspace~daeaf6d5-fa33-40a6-8db7-fdbdc589fba2/collection/33609178-ccfc0c08-adb0-42fe-a16a-b4528db7d421?action=share&source=collection_link&creator=33609178"
+	},
+	"item": [
+		{
+			"name": "Admin Route",
+			"item": [
+				{
+					"name": "Get All user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_admin}}/users",
+							"host": [
+								"{{base_url_admin}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by id",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Change User Role",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"role\":\"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_admin}}/users/693ad98df662dcd6bfdfb65f/role",
+							"host": [
+								"{{base_url_admin}}"
+							],
+							"path": [
+								"users",
+								"693ad98df662dcd6bfdfb65f",
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url_admin}}/stats",
+							"host": [
+								"{{base_url_admin}}"
+							],
+							"path": [
+								"stats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Register-user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"lola\",\n    \"email\": \"lola@gmail.com\",\n    \"password\": \"12345678\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"register"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json ? pm.response.json() : {};",
+							"",
+							"pm.test('Status code is 200-299', function () {",
+							"  pm.expect(pm.response.code).to.be.within(200, 299);",
+							"});",
+							"",
+							"if (res && typeof res === 'object') {",
+							"  pm.test('Response contains token', function () {",
+							"    pm.expect(res.token, 'token missing').to.exist;",
+							"  });",
+							"  if (res.token) {",
+							"    pm.environment.set('access_token', res.token);",
+							"    pm.collectionVariables.set('token', res.token);",
+							"  }",
+							"",
+							"  const uid = res.user && (res.user.id || res.user._id);",
+							"  pm.test('Response contains user id', function () {",
+							"    pm.expect(uid, 'user.id missing').to.exist;",
+							"  });",
+							"  if (uid) {",
+							"    pm.environment.set('user_id', uid);",
+							"  }",
+							"",
+							"  if (res.refreshToken) {",
+							"    pm.environment.set('refresh_token', res.refreshToken);",
+							"  }",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"lola@gmail.com\",\r\n    \"password\": \"12345678\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"login"
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Email",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5M2FjMGU1NjI2ZmYzNmJlOWQxYzM0NSIsImVtYWlsIjoiZmF2b3VydG9iaWxvYmEyMDBAZ21haWwuY29tIiwiaWF0IjoxNzY1NDU4MTQ5LCJleHAiOjE3NjU1NDQ1NDl9.JgWbaFLZ_yCyHiT6SDYwUakf_ZgN3fLqpIBjeyxlUiw\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/verify-email",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"verify-email"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Resend email verification",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"favourtobiloba200@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/resend-verification",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"resend-verification"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Protected Route:",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/me",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"me"
+					]
+				},
+				"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "Refreash-token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/refresh",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"refresh"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				},
+				"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "Log out",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/logout",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Request Password Reset",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"omotoshofavour200@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/forgot-password",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"forgot-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset-password",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzlhYzIwZGExNjFmODY0YTUyNjA3YiIsImVtYWlsIjoib21vdG9zaG9mYXZvdXIyMDBAZ21haWwuY29tIiwiaWF0IjoxNzY1Mzg3NTI2LCJleHAiOjE3NjUzOTExMjZ9.fSC7q2BJgAmAl2SxLUBf4pIWWbGnlHLbQwfi3PM1Xk4\",\r\n    \"newPassword\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4002/api/auth/reset-password",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4002",
+					"path": [
+						"api",
+						"auth",
+						"reset-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change-password",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}

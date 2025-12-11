@@ -217,18 +217,24 @@ Delete api/admin/:id
 
 ### Postman test Screenshot
 
-    ![Register with email](./docs/images/assets/screenshots/Registration%20with%20email.png)
-    ![login without verifying](./docs/images/assets/screenshots/login%20without%20verify.png)
-    ![verify email](./docs/images/assets/screenshots/verify%20email.png)
-    ![verification token from emal](./docs/images/assets/screenshots/verification%20token%20from%20email.png)
-     ![resend verification email ](./docs/images/assets/screenshots/Resend%20verification%20.png)
-    ![login after verifying](./docs/images/assets/screenshots/login%20after%20verifying%20.png)
-     ![welcome email](./docs/images/assets/screenshots/welcome%20email%20after%20verivication.png)
-    ![Protested Route](./docs/images/assets/screenshots/protect%20route%20.png)
-    ![Refresh token](./docs/images/assets/screenshots/Refresh%20Token.png)
-     ![Register with email](./docs/images/assets/screenshots/Registration%20with%20email.png)
-
----
+- ![Register with email](./docs/images/assets/screenshots/Registration%20with%20email.png)
+  ![login without verifying](./docs/images/assets/screenshots/login%20without%20verify.png)
+  ![verify email](./docs/images/assets/screenshots/verify%20email.png)
+  ![verification token from emal](./docs/images/assets/screenshots/verification%20token%20from%20email.png)
+  ![resend verification email ](./docs/images/assets/screenshots/Resend%20verification%20.png)
+  ![login after verifying](./docs/images/assets/screenshots/login%20after%20verifying%20.png)
+  ![welcome email](./docs/images/assets/screenshots/welcome%20email%20after%20verivication.png)
+  ![Protested Route](./docs/images/assets/screenshots/protect%20route%20.png)
+  ![Refresh token](./docs/images/assets/screenshots/Refresh%20Token.png)
+  ![log out](./docs/images/assets/screenshots/Log%20out.png)
+  ![Password Resent](./docs/images/assets/screenshots/password%20Reset%20.png)
+  ![password reset with emali and newpassword](./docs/images/assets/screenshots/password%20reset%20with%20token%20and%20nwepassword.png)
+  ![Change password for login user](./docs/images/assets/screenshots/change%20password%20for%20login%20user.png)
+  ![making request without acesstoken](./docs/images/assets/screenshots/making%20request%20without%20accessToken%20expire.png)
+  ![get all user](./docs/images/assets/screenshots/get%20all%20users.png)
+  ![Get user by id](./docs/images/assets/screenshots/Get%20user%20by%20Id.png)
+  ![change user role](./docs/images/assets/screenshots/Change%20user%20role.png)
+  ![admin route with unathtorized user](./docs/images/assets/screenshots/admin%20route%20with%20unauthorized%20user.png)
 
 ## 🚀 Deployment
 
@@ -287,9 +293,8 @@ This project is licensed under the MIT License.
 
 **Your Name**
 
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your Name](https://linkedin.com/in/yourname)
-- Portfolio: [yourportfolio.com](https://yourportfolio.com)
+- GitHub: [@favourof](https://github.com/favourof)
+- LinkedIn: [Favour Omotosho Ezekiel](https://www.linkedin.com/in/favour-omotosho-ezekiel/)
 
 ---
 
@@ -304,7 +309,7 @@ This project is licensed under the MIT License.
 
 ## 📞 Support
 
-For support, email your-email@example.com or open an issue on GitHub.
+For support, email favourtobiloba200@gmail.com or open an issue on GitHub.
 
 ---
 
