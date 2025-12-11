@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import bcrypt from "bcryptjs";
 import { validationResult } from "express-validator";
 import User from "../models/user";
@@ -14,12 +14,14 @@ import {
   clearRefreshTokenCookie,
 } from "../utils/response";
 import { sendVerificationEmail, sendWelcomeEmail } from "../utils/email";
+import { AppError } from "../middleware/errorHandler";
 
 //  Register a new user
 
 export const register = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const errors = validationResult(req);
@@ -33,8 +35,7 @@ export const register = async (
     // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      res.status(400).json({ message: "User already exists" });
-      return;
+      throw new AppError("User already exists", 400);
     }
 
     // Hash password
@@ -68,7 +69,6 @@ export const register = async (
       await sendVerificationEmail(user.email, actualVerificationToken);
     } catch (error) {
       console.error("Verification email error:", error);
-      // Don't fail registration if email fails
     }
 
     res.status(201).json({
@@ -78,13 +78,16 @@ export const register = async (
       user: formatUserResponse(user),
     });
   } catch (error) {
-    console.error("Register error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };
 // Login user
 
-export const login = async (req: AuthRequest, res: Response): Promise<void> => {
+export const login = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -97,15 +100,13 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
     // Find user
     const user = await User.findOne({ email });
     if (!user) {
-      res.status(400).json({ message: "Invalid credentials" });
-      return;
+      throw new AppError("Invalid credentials", 401);
     }
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      res.status(400).json({ message: "Invalid credentials" });
-      return;
+      throw new AppError("Invalid credentials", 401);
     }
 
     // Check if email is verified
@@ -136,22 +137,21 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
 
     res.json(response);
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };
 //   Refresh access token
 
 export const refreshToken = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
-      res.status(401).json({ message: "Refresh token not found" });
-      return;
+      throw new AppError("Refresh token not found", 401);
     }
 
     // Verify refresh token
@@ -159,15 +159,13 @@ export const refreshToken = async (
     try {
       decoded = verifyRefreshToken(refreshToken);
     } catch (error) {
-      res.status(401).json({ message: "Invalid refresh token" });
-      return;
+      throw new AppError("Invalid refresh token", 401);
     }
 
     // Find user and verify token matches
     const user = await User.findById(decoded.id);
     if (!user || user.refreshToken !== refreshToken) {
-      res.status(401).json({ message: "Invalid refresh token" });
-      return;
+      throw new AppError("Invalid refresh token", 401);
     }
 
     // Generate new tokens (token rotation)
@@ -187,8 +185,7 @@ export const refreshToken = async (
       token: accessToken,
     });
   } catch (error) {
-    console.error("Refresh token error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };
 
@@ -196,12 +193,12 @@ export const refreshToken = async (
 
 export const logout = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     if (!req.user) {
-      res.status(401).json({ message: "Not authorized" });
-      return;
+      throw new AppError("Not authorized", 401);
     }
 
     // Remove refresh token from database
@@ -215,17 +212,19 @@ export const logout = async (
       message: "Logged out successfully",
     });
   } catch (error) {
-    console.error("Logout error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };
 
 //   Get current user
-export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getMe = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     if (!req.user) {
-      res.status(401).json({ message: "Not authorized" });
-      return;
+      throw new AppError("Not authorized", 401);
     }
 
     const user = await User.findById(req.user.id).select(
@@ -233,8 +232,7 @@ export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
     );
 
     if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
+      throw new AppError("User not found", 404);
     }
 
     res.json({
@@ -242,7 +240,6 @@ export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
       user: formatUserResponse(user),
     });
   } catch (error) {
-    console.error("Get user error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };

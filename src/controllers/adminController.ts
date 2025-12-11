@@ -1,12 +1,15 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import User from "../models/user";
 import { AuthRequest } from "../types";
+import { AppError } from "../middleware/errorHandler";
+import { nextTick } from "process";
 
 //  Get all users (Admin only)
 
 export const getAllUsers = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const users = await User.find()
@@ -19,15 +22,15 @@ export const getAllUsers = async (
       users,
     });
   } catch (error) {
-    console.error("Get all users error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };
 
 //    Get single user by ID (Admin only)
 export const getUserById = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const user = await User.findById(req.params.id).select(
@@ -35,8 +38,7 @@ export const getUserById = async (
     );
 
     if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
+      throw new AppError("User not found", 404);
     }
 
     res.json({
@@ -44,20 +46,19 @@ export const getUserById = async (
       user,
     });
   } catch (error) {
-    console.error("Get user by ID error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };
 
 //   Update user role (Admin only)
 export const updateUserRole = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
+  Next: NextFunction
 ): Promise<void> => {
   try {
     if (!req.body || !req.body.role) {
-      res.status(400).json({ message: "Role is required" });
-      return;
+      throw new AppError("Role is required", 400);
     }
     const { role } = req.body;
 
@@ -69,14 +70,12 @@ export const updateUserRole = async (
     const user = await User.findById(req.params.id);
 
     if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
+      throw new AppError("User not found", 404);
     }
 
     // Prevent demoting yourself
     if (user._id.toString() === req.user?.id) {
-      res.status(400).json({ message: "Cannot change your own role" });
-      return;
+      throw new AppError("Cannot change your own role", 400);
     }
 
     user.role = role;
@@ -93,8 +92,7 @@ export const updateUserRole = async (
       },
     });
   } catch (error) {
-    console.error("Update user role error:", error);
-    res.status(500).json({ message: "Server error" });
+    Next(error);
   }
 };
 
@@ -104,20 +102,18 @@ export const updateUserRole = async (
  */
 export const deleteUser = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const user = await User.findById(req.params.id);
 
     if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
+      throw new AppError("User not found", 404);
     }
 
-    // Prevent deleting yourself
     if (user._id.toString() === req.user?.id) {
-      res.status(400).json({ message: "Cannot delete your own account" });
-      return;
+      throw new AppError("Cannot delete your own account", 400);
     }
 
     await user.deleteOne();
@@ -127,8 +123,7 @@ export const deleteUser = async (
       message: "User deleted successfully",
     });
   } catch (error) {
-    console.error("Delete user error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };
 
@@ -139,7 +134,8 @@ export const deleteUser = async (
  */
 export const getUserStats = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const totalUsers = await User.countDocuments();
@@ -163,7 +159,6 @@ export const getUserStats = async (
       },
     });
   } catch (error) {
-    console.error("Get user stats error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };

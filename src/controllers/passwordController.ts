@@ -1,16 +1,18 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import bcrypt from "bcryptjs";
 import { validationResult } from "express-validator";
 import User from "../models/user";
 import { AuthRequest } from "../types";
 import { generateResetToken, verifyResetToken } from "../utils/token";
 import { sendPasswordResetEmail } from "../utils/email";
+import { AppError } from "../middleware/errorHandler";
 
 //    Request password reset email
 
 export const forgotPassword = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const errors = validationResult(req);
@@ -25,11 +27,10 @@ export const forgotPassword = async (
 
     // Always return success (don't reveal if email exists)
     if (!user) {
-      res.json({
-        success: true,
-        message: "If that email exists, a reset link has been sent",
-      });
-      return;
+      throw new AppError(
+        "If that email exists, a reset link has been sent",
+        400
+      );
     }
 
     // Generate reset token
@@ -58,8 +59,7 @@ export const forgotPassword = async (
       message: "Password reset email sent",
     });
   } catch (error) {
-    console.error("Forgot password error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };
 
@@ -67,7 +67,8 @@ export const forgotPassword = async (
 
 export const resetPassword = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const errors = validationResult(req);
@@ -83,8 +84,7 @@ export const resetPassword = async (
     try {
       decoded = verifyResetToken(token);
     } catch (error) {
-      res.status(400).json({ message: "Invalid or expired reset token" });
-      return;
+      throw new AppError("Invalid or expired reset token", 400);
     }
 
     // Find user with valid reset token
@@ -96,8 +96,7 @@ export const resetPassword = async (
     });
 
     if (!user) {
-      res.status(400).json({ message: "Invalid or expired reset token" });
-      return;
+      throw new AppError("Invalid or expired reset token", 401);
     }
 
     // Hash new password
@@ -119,15 +118,15 @@ export const resetPassword = async (
         "Password reset successful. Please login with your new password.",
     });
   } catch (error) {
-    console.error("Reset password error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };
 
 //  Change password (when logged in)
 export const changePassword = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     if (!req.user) {
@@ -146,15 +145,13 @@ export const changePassword = async (
     const user = await User.findById(req.user.id);
 
     if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
+      throw new AppError("User not found", 404);
     }
 
     // Verify current password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
-      res.status(400).json({ message: "Current password is incorrect" });
-      return;
+      throw new AppError("Current password is incorrect", 400);
     }
 
     // Hash new password
@@ -168,7 +165,6 @@ export const changePassword = async (
       message: "Password changed successfully",
     });
   } catch (error) {
-    console.error("Change password error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };

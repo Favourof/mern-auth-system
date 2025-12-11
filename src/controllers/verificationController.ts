@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import { validationResult } from "express-validator";
 import User from "../models/user";
 import { AuthRequest } from "../types";
@@ -7,6 +7,7 @@ import {
   generateVerificationToken,
 } from "../utils/token";
 import { sendWelcomeEmail, resendVerificationEmail } from "../utils/email";
+import { AppError } from "../middleware/errorHandler";
 
 /**
  * @route   POST /api/auth/verify-email
@@ -15,7 +16,8 @@ import { sendWelcomeEmail, resendVerificationEmail } from "../utils/email";
  */
 export const verifyEmail = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const errors = validationResult(req);
@@ -46,16 +48,12 @@ export const verifyEmail = async (
     });
 
     if (!user) {
-      res
-        .status(400)
-        .json({ message: "Invalid or expired verification token" });
-      return;
+      throw new AppError("Invalid or expired verification token", 400);
     }
 
     // Check if already verified
     if (user.isVerified) {
-      res.status(400).json({ message: "Email already verified" });
-      return;
+      throw new AppError("Email already verified", 400);
     }
 
     // Mark as verified
@@ -77,8 +75,7 @@ export const verifyEmail = async (
       message: "Email verified successfully! You can now login.",
     });
   } catch (error) {
-    console.error("Verify email error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };
 
