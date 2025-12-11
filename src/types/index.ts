@@ -8,6 +8,11 @@ export interface IUser {
   role: "user" | "admin";
   refreshToken?: string;
   createdAt: Date;
+  isVerified: boolean;
+  verificationToken?: string;
+  verificationTokenExpire?: Date;
+  resetPasswordToken?: string;
+  resetPasswordExpire?: Date;
 }
 
 export interface IUserResponse {
@@ -15,6 +20,7 @@ export interface IUserResponse {
   name: string;
   email: string;
   role: string;
+  isVerified: boolean;
 }
 
 export interface TokenPayload {
@@ -48,4 +54,9 @@ export interface PasswordResetConfirm {
 export interface AdminUserResponse extends IUserResponse {
   createdAt: Date;
   refreshToken?: string;
+}
+
+export interface VerificationTokenPayload {
+  id: string;
+  email: string;
 }

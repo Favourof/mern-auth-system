@@ -8,6 +8,7 @@ export const formatUserResponse = (user: any) => {
     name: user.name,
     email: user.email,
     role: user.role,
+    isVerified: user.isVerified,
   };
 };
 

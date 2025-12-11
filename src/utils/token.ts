@@ -1,6 +1,10 @@
 import jwt, { Secret, SignOptions } from "jsonwebtoken";
 import { config } from "../config/config";
-import { ResetTokenPayload, TokenPayload } from "../types";
+import {
+  ResetTokenPayload,
+  TokenPayload,
+  VerificationTokenPayload,
+} from "../types";
 import crypto from "crypto";
 
 const jwtSecret = config.jwtSecret as string;
@@ -77,4 +81,30 @@ export const verifyResetToken = (token: string): ResetTokenPayload => {
  */
 export const generateRandomToken = (): string => {
   return crypto.randomBytes(32).toString("hex");
+};
+
+/**
+ * Generate Email Verification Token
+ */
+export const generateVerificationToken = (
+  userId: string,
+  email: string
+): string => {
+  const payload: VerificationTokenPayload = { id: userId, email };
+
+  return jwt.sign(payload, config.jwtSecret as Secret, {
+    expiresIn: "24h", // 24 hours to verify
+  });
+};
+
+/**
+ * Verify Email Verification Token
+ */
+export const verifyVerificationToken = (
+  token: string
+): VerificationTokenPayload => {
+  return jwt.verify(
+    token,
+    config.jwtSecret as Secret
+  ) as VerificationTokenPayload;
 };

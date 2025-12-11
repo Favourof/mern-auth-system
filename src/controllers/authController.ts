@@ -3,13 +3,17 @@ import bcrypt from "bcryptjs";
 import { validationResult } from "express-validator";
 import User from "../models/user";
 import { AuthRequest, AuthResponse } from "../types";
-import { generateTokens, verifyRefreshToken } from "../utils/token";
+import {
+  generateTokens,
+  generateVerificationToken,
+  verifyRefreshToken,
+} from "../utils/token";
 import {
   formatUserResponse,
   setRefreshTokenCookie,
   clearRefreshTokenCookie,
 } from "../utils/response";
-import { sendWelcomeEmail } from "../utils/email";
+import { sendVerificationEmail, sendWelcomeEmail } from "../utils/email";
 
 //  Register a new user
 
@@ -37,38 +41,47 @@ export const register = async (
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user with placeholder refresh token
+    // Generate verification token
+    const tempUserId = "temp";
+    const verificationToken = generateVerificationToken(tempUserId, email);
+
+    // Create user (unverified)
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
+      isVerified: false, // User starts as unverified
+      verificationToken,
+      verificationTokenExpire: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
     });
 
-    // Generate tokens
-    const { accessToken, refreshToken } = generateTokens(user._id.toString());
-
-    // Store refresh token in database
-    user.refreshToken = refreshToken;
+    // Update verification token with real user ID
+    const actualVerificationToken = generateVerificationToken(
+      user._id.toString(),
+      user.email
+    );
+    user.verificationToken = actualVerificationToken;
     await user.save();
 
-    // Set refresh token in cookie
-    setRefreshTokenCookie(res, refreshToken);
+    // Send verification email
+    try {
+      await sendVerificationEmail(user.email, actualVerificationToken);
+    } catch (error) {
+      console.error("Verification email error:", error);
+      // Don't fail registration if email fails
+    }
 
-    // Send response
-    const response: AuthResponse = {
+    res.status(201).json({
       success: true,
-      token: accessToken,
+      message:
+        "Registration successful! Please check your email to verify your account.",
       user: formatUserResponse(user),
-    };
-
-    res.status(201).json(response);
-    sendWelcomeEmail(email, name);
+    });
   } catch (error) {
     console.error("Register error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
-
 // Login user
 
 export const login = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -95,6 +108,15 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
       return;
     }
 
+    // Check if email is verified
+    if (!user.isVerified) {
+      res.status(403).json({
+        message: "Please verify your email before logging in",
+        requiresVerification: true,
+      });
+      return;
+    }
+
     // Generate new tokens
     const { accessToken, refreshToken } = generateTokens(user._id.toString());
 
@@ -118,7 +140,6 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 //   Refresh access token
 
 export const refreshToken = async (

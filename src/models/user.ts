@@ -8,6 +8,9 @@ export interface IUserDocument extends Document {
   role: "user" | "admin";
   resetPasswordExpire?: Date;
   resetPasswordToken?: string;
+  isVerified: boolean;
+  verificationToken?: string;
+  verificationTokenExpire?: Date;
   createsAT: Date;
 }
 
@@ -47,6 +50,18 @@ const UserShema: Schema = new Schema({
     default: null,
   },
   resetPasswordExpire: {
+    type: Date,
+    default: null,
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    default: null,
+  },
+  verificationTokenExpire: {
     type: Date,
     default: null,
   },

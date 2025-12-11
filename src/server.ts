@@ -9,6 +9,7 @@ import adminRoutes from "./routes/admin";
 const app: Application = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: config.clientUrl,

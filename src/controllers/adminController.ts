@@ -55,6 +55,10 @@ export const updateUserRole = async (
   res: Response
 ): Promise<void> => {
   try {
+    if (!req.body || !req.body.role) {
+      res.status(400).json({ message: "Role is required" });
+      return;
+    }
     const { role } = req.body;
 
     if (!["user", "admin"].includes(role)) {
