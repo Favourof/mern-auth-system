@@ -26,6 +26,6 @@ export const authLimiter = rateLimit({
  */
 export const resetPasswordLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 30, // 3 requests per hour
+  max: 3, // 3 requests per hour
   message: "Too many password reset requests, please try again later",
 });
