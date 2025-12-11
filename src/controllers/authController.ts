@@ -9,6 +9,7 @@ import {
   setRefreshTokenCookie,
   clearRefreshTokenCookie,
 } from "../utils/response";
+import { sendWelcomeEmail } from "../utils/email";
 
 //  Register a new user
 
@@ -61,6 +62,7 @@ export const register = async (
     };
 
     res.status(201).json(response);
+    sendWelcomeEmail(email, name);
   } catch (error) {
     console.error("Register error:", error);
     res.status(500).json({ message: "Server error" });

@@ -1,6 +1,7 @@
 import jwt, { Secret, SignOptions } from "jsonwebtoken";
 import { config } from "../config/config";
-import { TokenPayload } from "../types";
+import { ResetTokenPayload, TokenPayload } from "../types";
+import crypto from "crypto";
 
 const jwtSecret = config.jwtSecret as string;
 const accessTokenExpiry = config.accessTokenExpiry as string;
@@ -49,4 +50,31 @@ export const generateTokens = (userId: string) => {
     accessToken: generateAccessToken(userId),
     refreshToken: generateRefreshToken(userId),
   };
+};
+
+// Generate Password Reset Token
+export const generateResetToken = (userId: string, email: string): string => {
+  const payload: ResetTokenPayload = { id: userId, email };
+
+  return jwt.sign(
+    payload,
+    jwtSecret as Secret,
+    {
+      expiresIn: config.resetTokenExpiry,
+    } as SignOptions
+  );
+};
+
+/**
+ * Verify Reset Token
+ */
+export const verifyResetToken = (token: string): ResetTokenPayload => {
+  return jwt.verify(token, config.jwtSecret as Secret) as ResetTokenPayload;
+};
+
+/**
+ * Generate random token (alternative approach)
+ */
+export const generateRandomToken = (): string => {
+  return crypto.randomBytes(32).toString("hex");
 };

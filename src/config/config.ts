@@ -12,6 +12,12 @@ interface Config {
   cookieMaxAge: number;
   accessTokenExpiry: string;
   refreshTokenExpiry: string;
+  resetTokenExpiry: string;
+  emailHost: string;
+  emailPort: number;
+  emailUser: string;
+  emailPassword: string;
+  emailFrom: string;
 }
 
 export const config: Config = {
@@ -24,4 +30,10 @@ export const config: Config = {
   cookieMaxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
   accessTokenExpiry: "15m",
   refreshTokenExpiry: "7d",
+  emailHost: process.env.EMAIL_HOST || "smtp.gmail.com",
+  emailPort: Number(process.env.EMAIL_PORT) || 587,
+  emailUser: process.env.EMAIL_USER || "",
+  emailPassword: process.env.EMAIL_PASSWORD || "",
+  emailFrom: process.env.EMAIL_FROM || "noreply@yourapp.com",
+  resetTokenExpiry: "1h",
 };

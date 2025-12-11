@@ -4,8 +4,10 @@ export interface IUserDocument extends Document {
   name: string;
   email: string;
   password: string;
-  refreshToken: string;
+  refreshToken: string | null;
   role: "user" | "admin";
+  resetPasswordExpire?: Date;
+  resetPasswordToken?: string;
   createsAT: Date;
 }
 
@@ -38,6 +40,14 @@ const UserShema: Schema = new Schema({
   },
   refreshToken: {
     type: String,
+    default: null,
+  },
+  resetPasswordToken: {
+    type: String,
+    default: null,
+  },
+  resetPasswordExpire: {
+    type: Date,
     default: null,
   },
   createdAt: {

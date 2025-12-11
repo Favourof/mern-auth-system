@@ -30,3 +30,22 @@ export interface AuthResponse {
   token: string;
   user: IUserResponse;
 }
+
+export interface ResetTokenPayload {
+  id: string;
+  email: string;
+}
+
+export interface PasswordResetRequest {
+  email: string;
+}
+
+export interface PasswordResetConfirm {
+  token: string;
+  newPassword: string;
+}
+
+export interface AdminUserResponse extends IUserResponse {
+  createdAt: Date;
+  refreshToken?: string;
+}
