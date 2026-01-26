@@ -63,7 +63,7 @@ A production-ready authentication system built with MongoDB, Express, React, Nod
 - MongoDB & Mongoose
 - JWT (jsonwebtoken)
 - bcryptjs
-- nodemailer
+- Resend
 - express-rate-limit
 - express-validator
 - cookie-parser
@@ -131,13 +131,10 @@ JWT_SECRET=your_access_token_secret_here
 JWT_REFRESH_SECRET=your_refresh_token_secret_here
 
 # Client URL
-CLIENT_URL=http://localhost:5179
+CLIENT_URL=https://client-mu-ebon.vercel.app/
 
 # Email Configuration
-EMAIL_HOST=smtp.ethereal.email
-EMAIL_PORT=587
-EMAIL_USER=your-email@ethereal.email
-EMAIL_PASSWORD=your-password
+RESEND_API_KEY=
 EMAIL_FROM=noreply@yourapp.com
 ```
 
@@ -312,5 +309,9 @@ This project is licensed under the MIT License.
 For support, email favourtobiloba200@gmail.com or open an issue on GitHub.
 
 ---
+
+## Frontend url
+
+https://client-mu-ebon.vercel.app/
 
 **⭐ If you find this project helpful, please give it a star!**
