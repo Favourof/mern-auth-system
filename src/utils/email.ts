@@ -29,7 +29,7 @@ transporter.verify((error, success) => {
  */
 export const sendPasswordResetEmail = async (
   email: string,
-  resetToken: string
+  resetToken: string,
 ): Promise<void> => {
   // Frontend will handle this URL and show password reset form
   const resetUrl = `${config.clientUrl}/reset-password?token=${resetToken}`;
@@ -85,8 +85,10 @@ export const sendPasswordResetEmail = async (
  */
 export const sendVerificationEmail = async (
   email: string,
-  verificationToken: string
+  verificationToken: string,
 ): Promise<void> => {
+  console.log(config.emailPort);
+
   // Frontend will handle this URL and extract the token
   const verificationUrl = `${config.clientUrl}/verify-email?token=${verificationToken}`;
 
@@ -141,7 +143,7 @@ export const sendVerificationEmail = async (
  */
 export const resendVerificationEmail = async (
   email: string,
-  verificationToken: string
+  verificationToken: string,
 ): Promise<void> => {
   const verificationUrl = `${config.clientUrl}/verify-email?token=${verificationToken}`;
 
@@ -188,7 +190,7 @@ export const resendVerificationEmail = async (
  */
 export const sendWelcomeEmail = async (
   email: string,
-  name: string
+  name: string,
 ): Promise<void> => {
   const message = {
     from: config.emailFrom,
