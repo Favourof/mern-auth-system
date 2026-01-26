@@ -18,6 +18,7 @@ interface Config {
   emailUser: string;
   emailPassword: string;
   emailFrom: string;
+  resendApiKey: string;
 }
 
 export const config: Config = {
@@ -34,6 +35,7 @@ export const config: Config = {
   emailPort: Number(process.env.EMAIL_PORT) || 587,
   emailUser: process.env.EMAIL_USER || "",
   emailPassword: process.env.EMAIL_PASSWORD || "",
-  emailFrom: process.env.EMAIL_FROM || "noreply@yourapp.com",
+  emailFrom: process.env.EMAIL_FROM || "noreply@resend.dev",
   resetTokenExpiry: "1h",
+  resendApiKey: process.env.RESEND_API_KEY || "",
 };

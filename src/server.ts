@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.set("trust proxy", 1);
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://client-mu-ebon.vercel.app"],
+    origin: ["http://localhost:5174", "https://client-mu-ebon.vercel.app"],
     credentials: true,
   }),
 );
