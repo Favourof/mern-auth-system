@@ -6,12 +6,16 @@ import { config } from "../config/config";
 const createTransporter = () => {
   return nodemailer.createTransport({
     host: config.emailHost,
-    port: config.emailPort,
+    port: 587,
     secure: false,
     auth: {
       user: config.emailUser,
       pass: config.emailPassword,
     },
+    tls: {
+      rejectUnauthorized: false,
+    },
+    connectionTimeout: 10_000,
   });
 };
 const transporter = createTransporter();
@@ -66,7 +70,7 @@ export const sendPasswordResetEmail = async (
   };
 
   try {
-    const transporter = createTransporter();
+    // const transporter = createTransporter();
     const info = await transporter.sendMail(message);
 
     if (config.nodeEnv === "development") {
@@ -124,7 +128,7 @@ export const sendVerificationEmail = async (
   };
 
   try {
-    const transporter = createTransporter();
+    // const transporter = createTransporter();
     const info = await transporter.sendMail(message);
 
     if (config.nodeEnv === "development") {
@@ -172,7 +176,7 @@ export const resendVerificationEmail = async (
   };
 
   try {
-    const transporter = createTransporter();
+    // const transporter = createTransporter();
     const info = await transporter.sendMail(message);
 
     if (config.nodeEnv === "development") {
@@ -204,7 +208,7 @@ export const sendWelcomeEmail = async (
   };
 
   try {
-    const transporter = createTransporter();
+    // const transporter = createTransporter();
     await transporter.sendMail(message);
 
     // if (config.nodeEnv === "development") {

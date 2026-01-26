@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import connectDB from "./config/db";
@@ -8,11 +10,13 @@ import { apiLimiter } from "./middleware/rateLimiter";
 import adminRoutes from "./routes/admin";
 import { requestLogger } from "./utils/logger";
 import { errorHandler } from "./middleware/errorHandler";
+
 const app: Application = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.set("trust proxy", 1);
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://client-mu-ebon.vercel.app"],
