@@ -1,7 +1,11 @@
-import { Resend } from "resend";
+import mailjet from "node-mailjet";
 import { config } from "../config/config";
 
-const resend = new Resend(config.resendApiKey);
+// Mailjet setup
+const mailjetClient = mailjet.apiConnect(
+  config.mailjetApiKey,
+  config.mailjetSecretKey,
+);
 
 /**
  * Shared email wrapper
@@ -16,18 +20,34 @@ const sendEmail = async ({
   html: string;
 }) => {
   try {
-    await resend.emails.send({
-      from: config.emailFrom,
-      to,
-      subject,
-      html,
+    const request = mailjetClient.post("send", { version: "v3.1" }).request({
+      Messages: [
+        {
+          From: {
+            Email: config.emailFrom,
+            Name: "Mern Auth System",
+          },
+          To: [
+            {
+              Email: to,
+            },
+          ],
+          Subject: subject,
+          HTMLPart: html,
+        },
+      ],
     });
+
+    await request;
 
     if (config.nodeEnv === "development") {
       console.log(`✅ Email sent: ${subject} → ${to}`);
     }
-  } catch (error) {
-    console.error("❌ Email send error:", error);
+  } catch (error: any) {
+    console.error(
+      "❌ Email send error:",
+      error.statusCode ? `${error.statusCode} - ${error.message}` : error,
+    );
     throw new Error("Email could not be sent");
   }
 };

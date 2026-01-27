@@ -14,11 +14,13 @@ interface Config {
   refreshTokenExpiry: string;
   resetTokenExpiry: string;
   emailHost: string;
-  emailPort: number;
+  // emailPort: number;
   emailUser: string;
-  emailPassword: string;
+  // emailPassword: string;
   emailFrom: string;
-  resendApiKey: string;
+  // resendApiKey: string;
+  mailjetApiKey: string;
+  mailjetSecretKey: string;
 }
 
 export const config: Config = {
@@ -32,10 +34,12 @@ export const config: Config = {
   accessTokenExpiry: "15m",
   refreshTokenExpiry: "7d",
   emailHost: process.env.EMAIL_HOST || "smtp.gmail.com",
-  emailPort: Number(process.env.EMAIL_PORT) || 587,
+  // emailPort: Number(process.env.EMAIL_PORT) || 587,
   emailUser: process.env.EMAIL_USER || "",
-  emailPassword: process.env.EMAIL_PASSWORD || "",
-  emailFrom: process.env.EMAIL_FROM || "noreply@resend.dev",
+  // emailPassword: process.env.EMAIL_PASSWORD || "",
+  emailFrom: process.env.EMAIL_FROM || "",
   resetTokenExpiry: "1h",
-  resendApiKey: process.env.RESEND_API_KEY || "",
+  // resendApiKey: process.env.RESEND_API_KEY || "",
+  mailjetApiKey: process.env.MAILJET_API_KEY || "",
+  mailjetSecretKey: process.env.MAILJET_SECRET_KEY || "",
 };

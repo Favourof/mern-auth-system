@@ -2,14 +2,13 @@ import { NextFunction, Response } from "express";
 import User from "../models/user";
 import { AuthRequest } from "../types";
 import { AppError } from "../middleware/errorHandler";
-import { nextTick } from "process";
 
 //  Get all users (Admin only)
 
 export const getAllUsers = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const users = await User.find()
@@ -30,11 +29,11 @@ export const getAllUsers = async (
 export const getUserById = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const user = await User.findById(req.params.id).select(
-      "-password -refreshToken -resetPasswordToken"
+      "-password -refreshToken -resetPasswordToken",
     );
 
     if (!user) {
@@ -54,7 +53,7 @@ export const getUserById = async (
 export const updateUserRole = async (
   req: AuthRequest,
   res: Response,
-  Next: NextFunction
+  Next: NextFunction,
 ): Promise<void> => {
   try {
     if (!req.body || !req.body.role) {
@@ -103,7 +102,7 @@ export const updateUserRole = async (
 export const deleteUser = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const user = await User.findById(req.params.id);
@@ -135,7 +134,7 @@ export const deleteUser = async (
 export const getUserStats = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const totalUsers = await User.countDocuments();
